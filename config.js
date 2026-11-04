@@ -1,0 +1,1 @@
+window.QUEST_CONFIG = Object.freeze({"supabaseUrl":"https://tgrvkfljqwaapbnqfifp.supabase.co","publishableKey":"sb_publishable_GO6cRImSnd3MaW3aN23ynA_FGLFd-Qo","siteUrl":"https://itztov4r.github.io/TOV4R-Code-Quest/"});

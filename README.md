@@ -1,78 +1,61 @@
 # TOV4R Code Quest
 
-**Apprends. Code. Explore.** Une aventure pédagogique pour découvrir HTML, CSS et JavaScript dans un navigateur.
+A game-based learning academy by **Mehdi Hmaiss** for HTML, CSS and JavaScript.
 
-![Les trois mondes de Code Quest](assets/quest-world.webp)
+**[Open the academy](https://itztov4r.github.io/TOV4R-Code-Quest/)** · [Source](https://github.com/itztov4r/TOV4R-Code-Quest)
 
-[**Jouer à Code Quest**](https://itztov4r.github.io/TOV4R-Code-Quest/)
+## Learn by building
 
-## Une vraie boucle d’apprentissage
+- 30 French missions across three illustrated worlds: short lessons, quizzes, code challenges and a final boss per track.
+- Starting-level onboarding, daily goals, avatars, XP, stars, badges and mission unlocks.
+- Personal dashboard with actual seven-day activity and per-track progress.
+- Email/password accounts with Supabase Auth, confirmation emails and password recovery.
+- Private cloud profiles, saved drafts and server-recorded mission completions; resume on another device by signing into the same account.
+- Clear save status, manual sync, offline draft queue and retried completion attempts. Pending completions earn XP after server acceptance.
+- Local demo, JSON export and explicit import. Imported completions are checked again and earn one star; existing cloud completions are preserved.
+- Isolated HTML/CSS previews and a JavaScript fundamentals console using a Worker with a two-second limit.
 
-1. Choisir un pseudo, son niveau, son premier langage, son objectif et son avatar.
-2. Démarrer automatiquement la mission recommandée.
-3. Lire une courte leçon et son exemple.
-4. Répondre à une question puis construire une solution dans l’éditeur.
-5. Exécuter le code, lire les contrôles, gagner XP et étoiles, débloquer la suite.
+## Run locally
 
-**30 missions** : 10 HTML, 10 CSS, 10 JavaScript ; dans chaque monde, 4 premiers pas, 3 missions intermédiaires et 3 missions plus avancées, dont un mini-projet final.
+Serve this directory with a static server. The frontend uses a vendored, pinned `@supabase/supabase-js@2.118.0` UMD build; no build step is required.
 
-## Fonctions
-
-- Tableau de bord, carte des missions, progression par monde.
-- Leçons en français, 30 questions, 79 contrôles de code et 2 indices par mission.
-- Éditeur avec Tab et Ctrl/⌘ + Entrée ; aperçu HTML/CSS séparé, console JavaScript en Web Worker.
-- Arrêt des essais JavaScript après 2 secondes ; 40 lignes de console affichées au maximum.
-- XP attribués une seule fois par mission, meilleur score d’étoiles conservé.
-- 8 badges, niveau de joueur, objectif quotidien et série de jours d’apprentissage.
-- Laboratoire libre HTML/CSS/JS et lexique de 16 termes.
-- Profil, réglage de niveau, avatar, sons facultatifs activables.
-- Sauvegarde locale versionnée, export et restauration JSON validée.
-- Mise en page responsive, contrôles clavier et prise en compte de la réduction des animations.
-
-## Lancer en local
-
-Les fichiers sont statiques, sans dépendance à installer. Utiliser un petit serveur HTTP pour que la console Worker et le stockage fonctionnent dans des conditions cohérentes :
-
-```bash
+```sh
 python -m http.server 8000
+node --test tests/*.test.*
 ```
 
-Ouvrir `http://localhost:8000`. Le site se publie également sur GitHub Pages depuis la branche `release/code-quest-v1` (branche par défaut), dossier `/ (root)`.
+`npm ci` is only needed to reproduce the vendored SDK. Its MIT license is included in `vendor/`.
 
-## Architecture
+## Cloud architecture
 
-| Fichier | Rôle |
-| --- | --- |
-| `index.html` | Structure et dialogues natifs |
-| `style.css` | Identité visuelle, adaptations tablette/mobile |
-| `curriculum.js` | Contenu des 30 missions |
-| `core.js` | État, validation de sauvegarde, XP, progression, règles de code |
-| `app.js` | Navigation, interface, éditeur, aperçu, Worker, export/import |
-| `assets/` | Illustration originale et déclinaisons WebP optimisées |
-| `tests/core.test.js` | Tests de contenu, progression, points et sauvegardes |
+`config.js` contains the Supabase project URL and **publishable key only**. Authentication tokens are handled by the official SDK. Service credentials remain in the Edge Function runtime.
 
-## Vérifier
+- `database/schema.sql`: additive `cq_*` schema, mission catalog, own-user row-level policies, private statistics view and restricted completion RPC.
+- `supabase/functions/codequest-complete/`: checks the bearer identity, quiz and code requirements, derives stars and records completions using the restricted RPC.
+- `cloud.js`: account-scoped storage, dirty-field synchronization, offline queues and cloud imports.
+- `tests/`: curriculum, execution, state, server validation and cloud isolation tests.
+- `database/verify-rls.sql`: transaction-only isolation/replay checks; all fixtures are rolled back.
 
-```bash
-node --test tests/core.test.js
-node --check app.js
+XP comes from the database catalog and a unique `(user_id, mission_id)` completion. Replays retain the best stars and original completion date. Client roles cannot write progress directly or call the recording RPC. Existing unrelated application tables are untouched.
+
+Code checks are educational pattern checks, not a secure code-grading or anti-cheat system. Server code is never executed from learner input. Avoid using these scores as a formal certification.
+
+## Auth URL configuration
+
+In Supabase **Authentication → URL Configuration**, allow:
+
+```
+https://itztov4r.github.io/TOV4R-Code-Quest/
 ```
 
-10 tests automatisés couvrent la structure du cours, les solutions, l’exécution des 10 solutions JavaScript, le déblocage, les niveaux de départ, l’absence de multiplication d’XP en rejouant, les séries de jours, les sauvegardes et les imports invalides. GitHub Actions les exécute à chaque push et pull request.
+Keep email confirmation enabled. The app supplies this URL for confirmation and recovery links. This setting must be verified in the dashboard before calling the email-link flow fully tested. Add any chosen local development URL separately if testing those flows locally. Use your own Supabase project and apply the schema/function if forking; do not reuse this deployment's project for another application.
 
-## Règles et limites
+## Verification
 
-- Les niveaux de départ sont auto-déclarés : ils proposent un point d’entrée sans attribuer d’XP aux missions sautées.
-- Les contrôles de code sont pédagogiques et partiellement syntaxiques ; ce ne sont pas des tests exhaustifs ni une certification.
-- Les missions JavaScript enseignent les fondamentaux du langage dans un Worker, sans DOM, `document` ou `window`. HTML/CSS disposent d’un aperçu en iframe sandboxée.
-- L’application ne demande aucun mot de passe et ne crée pas de compte distant. Le profil reste dans le navigateur. Aucun classement global ni synchronisation multi-appareils automatique.
-- Une suppression du stockage navigateur efface la partie locale ; l’export JSON permet de la restaurer.
-- Les temps d’étude sont indicatifs. Le parcours est une introduction pratique, pas une couverture exhaustive des trois langages.
+17 automated tests pass. Live database tests verified own-user access, blocked foreign writes, blocked anonymous reads, restricted completion writes, mission prerequisites, unique XP and best-star retention. Security advisors reported no issues. Unauthenticated completion requests return HTTP 401. Signup, confirmation delivery and password recovery still require end-to-end verification with the dashboard URL configuration and a real user-controlled account.
 
-## Crédits
+## Deployment
 
-Projet préparé pour **Mehdi Hmaiss / TOV4R**, avec assistance IA pour le code, le contenu pédagogique, les tests et l’illustration.
+GitHub Pages publishes the repository root of `release/code-quest-v1`, the default branch. Keep source changes on this publishing branch. Assets are original illustrations created for the project.
 
-Illustration originale générée pour ce projet : trois îles de programmation et robot explorateur, palette nuit/mint/lilas/ambre. Déclinaisons `html-island.webp`, `css-island.webp`, `js-island.webp` et `robot.webp` issues du même visuel. Aucun asset tiers distant requis.
-
-Licence du code : MIT — voir [LICENSE](LICENSE).
+MIT licensed. Author: Mehdi Hmaiss.
