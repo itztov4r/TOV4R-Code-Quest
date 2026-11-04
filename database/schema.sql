@@ -29,6 +29,7 @@ create table public.cq_drafts (
  code text not null check(char_length(code)<=20000),
  updated_at timestamptz not null default now(), primary key(user_id,mission_id)
 );
+create index cq_progress_mission_id_idx on public.cq_progress(mission_id);
 create index cq_progress_recent on public.cq_progress(user_id,completed_at desc);
 create function public.cq_touch_updated_at() returns trigger language plpgsql security invoker set search_path='' as $$
 begin new.updated_at=now(); return new; end $$;
@@ -119,3 +120,4 @@ insert into public.cq_missions(id,track,position,level,xp,title) values
 ('js-08','js',8,3,100,'Le colis de données'),
 ('js-09','js',9,3,100,'Le bouclier des erreurs'),
 ('js-10','js',10,3,100,'Boss : le bilan de la quête');
+

@@ -56,10 +56,13 @@ Custom SMTP is currently **not configured** on the live Supabase project. Its bu
 
 ## Verification
 
-17 automated tests pass. Live database tests verified own-user access, blocked foreign writes, blocked anonymous reads, restricted completion writes, mission prerequisites, unique XP and best-star retention. Security advisors reported no issues. Unauthenticated completion requests return HTTP 401. Signup, confirmation delivery and password recovery still require end-to-end verification with a configured SMTP provider and a real user-controlled account.
+20 automated tests pass in this audit, including account-switch races, calendar validation and worker cancellation. Read-only live checks confirmed own-user policies, RLS, and restricted completion execution privileges. This audit did not repeat the historical fixture writes or real email flows. The shared project advisors report disabled leaked-password protection and a missing mission foreign-key index; see [AUDIT.md](AUDIT.md) for exact scope, remaining runner isolation limits and rollout instructions.
+
+Signup, confirmation delivery and password recovery still require end-to-end verification with a configured SMTP provider and a real user-controlled account.
 
 ## Deployment
 
 GitHub Pages publishes the repository root of `release/code-quest-v1`, the default branch. Keep source changes on this publishing branch. Assets are original illustrations created for the project.
 
 MIT licensed. Author: Mehdi Hmaiss.
+
