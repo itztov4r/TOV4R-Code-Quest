@@ -48,11 +48,15 @@ In Supabase **Authentication → URL Configuration**, allow:
 https://itztov4r.github.io/TOV4R-Code-Quest/
 ```
 
-Keep email confirmation enabled. The app supplies this URL for confirmation and recovery links. This setting must be verified in the dashboard before calling the email-link flow fully tested. Add any chosen local development URL separately if testing those flows locally. Use your own Supabase project and apply the schema/function if forking; do not reuse this deployment's project for another application.
+Keep email confirmation enabled. The app supplies this URL for confirmation and recovery links. The live Site URL and exact redirect allow-list entry were saved and verified in the dashboard on 4 November 2026. Add any chosen local development URL separately if testing those flows locally. Use your own Supabase project and apply the schema/function if forking; do not reuse this deployment's project for another application.
+
+## Email delivery prerequisite
+
+Custom SMTP is currently **not configured** on the live Supabase project. Its built-in sender only accepts the organization team’s email addresses, so public email signup and recovery must not be described as production-ready. Connect an SMTP provider with an authorized sender before opening signup to everyone. Keep email confirmation enabled. See [Supabase SMTP documentation](https://supabase.com/docs/guides/auth/auth-smtp).
 
 ## Verification
 
-17 automated tests pass. Live database tests verified own-user access, blocked foreign writes, blocked anonymous reads, restricted completion writes, mission prerequisites, unique XP and best-star retention. Security advisors reported no issues. Unauthenticated completion requests return HTTP 401. Signup, confirmation delivery and password recovery still require end-to-end verification with the dashboard URL configuration and a real user-controlled account.
+17 automated tests pass. Live database tests verified own-user access, blocked foreign writes, blocked anonymous reads, restricted completion writes, mission prerequisites, unique XP and best-star retention. Security advisors reported no issues. Unauthenticated completion requests return HTTP 401. Signup, confirmation delivery and password recovery still require end-to-end verification with a configured SMTP provider and a real user-controlled account.
 
 ## Deployment
 
