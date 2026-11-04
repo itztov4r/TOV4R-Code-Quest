@@ -4,6 +4,8 @@
 
 ![Les trois mondes de Code Quest](assets/quest-world.webp)
 
+[**Jouer à Code Quest**](https://itztov4r.github.io/TOV4R-Code-Quest/)
+
 ## Une vraie boucle d’apprentissage
 
 1. Choisir un pseudo, son niveau, son premier langage, son objectif et son avatar.
@@ -35,7 +37,7 @@ Les fichiers sont statiques, sans dépendance à installer. Utiliser un petit se
 python -m http.server 8000
 ```
 
-Ouvrir `http://localhost:8000`. Le site se publie également sur GitHub Pages depuis la branche `main`, dossier `/ (root)`.
+Ouvrir `http://localhost:8000`. Le site se publie également sur GitHub Pages depuis la branche `release/code-quest-v1` (branche par défaut), dossier `/ (root)`.
 
 ## Architecture
 
