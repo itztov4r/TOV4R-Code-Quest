@@ -9,7 +9,7 @@ function normalize(raw,missions){
  const state=initial(),ids=new Set(missions.map(m=>m.id));
  if(raw.profile!==null){const p=raw.profile;if(!p||typeof p.name!=='string'||!p.name.trim()||p.name.length>24||![1,2,3].includes(p.level)||!['html','css','js'].includes(p.track)||![1,2,3].includes(p.goal)||!['robot','fox','cat','alien'].includes(p.avatar))throw new Error('Profil invalide.');state.profile={name:p.name.trim(),level:p.level,track:p.track,goal:p.goal,avatar:p.avatar};}
  if(!raw.completed||typeof raw.completed!=='object'||Array.isArray(raw.completed)||!raw.drafts||typeof raw.drafts!=='object'||Array.isArray(raw.drafts))throw new Error('Progression invalide.');
- for(const [id,value]of Object.entries(raw.completed)){if(!ids.has(id)||!value||![1,2,3].includes(value.stars)||!/^\d{4}-\d{2}-\d{2}$/.test(value.date)||Number.isNaN(Date.parse(value.date+'T12:00:00')))throw new Error('Mission sauvegardée invalide.');state.completed[id]={stars:value.stars,date:value.date};}
+ for(const [id,value]of Object.entries(raw.completed)){if(!ids.has(id)||!value||![1,2,3].includes(value.stars)||!/^\d{4}-\d{2}-\d{2}$/.test(value.date)||Number.isNaN(Date.parse(value.date+'T12:00:00Z'))||new Date(value.date+'T12:00:00Z').toISOString().slice(0,10)!==value.date)throw new Error('Mission sauvegardée invalide.');state.completed[id]={stars:value.stars,date:value.date};}
  for(const [id,value]of Object.entries(raw.drafts)){if((!ids.has(id)&&!['lab-html','lab-css','lab-js'].includes(id))||typeof value!=='string'||value.length>20000)throw new Error('Brouillon invalide.');state.drafts[id]=value;}
  state.lastTrack=['html','css','js'].includes(raw.lastTrack)?raw.lastTrack:(state.profile?.track||'html');state.sound=raw.sound===true;return state;
 }
@@ -25,3 +25,4 @@ function award(state,mission,stars,date=today()){const prior=state.completed[mis
 function checkCode(code,mission){if(typeof code!=='string'||code.length>20000)return [{label:'Code limité à 20 000 caractères',passed:false}];let source=code.replace(/\/\*[\s\S]*?\*\//g,'').replace(/<!--[\s\S]*?-->/g,'');return mission.challenge.checks.map(check=>({label:check.label,passed:new RegExp(check.pattern,check.flags||'').test(source)}));}
 const api={VERSION,today,initial,normalize,xp,streak,unlocked,recommend,award,checkCode};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.QuestCore=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
+
