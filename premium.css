@@ -14,3 +14,24 @@
 @media(prefers-reduced-motion:reduce){.coverage-track>span,.premium-goal-track>span,.activity-track>span{transition:none}}
 
 [hidden]{display:none!important}button.sync-status{border:1px solid #3a435b;border-radius:20px;background:#1c2235;padding:7px 10px;cursor:pointer}.auth-visual .art-tags{position:static;display:flex;gap:8px;margin:20px 0}.auth-visual .art-tags span{font-size:10px;border:1px solid #9babc840;border-radius:8px;padding:8px 10px;background:#18243c}.panel.account-chip{margin-bottom:24px;flex-wrap:wrap}.panel.account-chip>div{flex:1;min-width:170px}.panel.account-chip p{overflow-wrap:anywhere}.auth-card>.muted{font-size:13px;line-height:1.8}.auth-card .backup-section{margin-top:25px}.premium-worlds{margin-bottom:30px}@media(max-width:940px){.panel.account-chip{display:flex}}@media(max-width:600px){.topbar-stats{gap:8px}button.sync-status{font-size:8px;padding:5px}.streak-pill>span{display:none}.auth-card h1{font-size:32px}.auth-screen>.setup-header>.setup-label{display:none}}
+
+
+/* Responsive polish: comfortable mobile auth and mission workspace. */
+:where(img,svg,video,iframe){max-width:100%}
+:where(.auth-layout,.auth-card,.premium-panel,.mission-card,.track-intro,.panel){min-width:0}
+@media(max-width:700px){
+ .auth-screen{min-width:0;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+ .auth-card,.auth-form{min-width:0}
+ .auth-form input,.auth-form select{font-size:16px;max-width:100%}
+ .auth-tabs button{min-height:44px}
+ .mission-dialog{height:100dvh;max-height:100dvh}
+ .mission-tabs,.track-tabs{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+ .mission-tabs button,.track-tab{min-height:44px;flex-shrink:0}
+ #mission-body{overflow-wrap:anywhere}
+ .code-block,pre{max-width:100%;overflow-x:auto}
+ textarea{max-width:100%;font-size:16px}
+ .mission-bottom{padding-bottom:max(16px,env(safe-area-inset-bottom))}
+ .topbar,.topbar-stats{min-width:0}
+}
+@media(max-width:360px){.auth-screen{padding-inline:12px}.auth-card h1{font-size:clamp(27px,9vw,32px)}}
+
