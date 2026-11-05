@@ -1,0 +1,10 @@
+import {createRequire} from 'node:module';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validateAttempt} from '../supabase/functions/codequest-complete/validation.mjs';
+const require=createRequire(import.meta.url),{missions}=require('../curriculum.js');
+const catalog=missions.map(m=>({id:m.id,answer:m.quiz.answer,checks:m.challenge.checks}));
+const valid=m=>({missionId:m.id,code:m.challenge.solution,lessonRead:true,quizAnswer:m.quiz.answer,quizAttempts:1,hints:0,revealed:false});
+test('server validation accepts all 30 curriculum solutions',()=>{for(const m of missions)assert.deepEqual(validateAttempt(valid(m),catalog),{missionId:m.id,stars:3});});
+test('server rejects unearned completions and malformed inputs',()=>{const m=missions[0],base=valid(m);for(const patch of [{lessonRead:false},{quizAnswer:(m.quiz.answer+1)%4},{missionId:'unknown'},{code:''},{code:'x'.repeat(20001)},{code:'<!-- '+m.challenge.solution+' -->'},{quizAttempts:0},{quizAttempts:101},{hints:-1},{hints:3}])assert.throws(()=>validateAttempt({...base,...patch},catalog));});
+test('stars are derived by the server, including solution imports',()=>{const base=valid(missions[0]);assert.equal(validateAttempt({...base,stars:100000,xp:999999},catalog).stars,3);assert.equal(validateAttempt({...base,revealed:true},catalog).stars,1);assert.equal(validateAttempt({...base,quizAttempts:2,hints:1},catalog).stars,1);});
